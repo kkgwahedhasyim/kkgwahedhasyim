@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KKG Wahed Hasyim - Sampang</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>KKG Wahed Hasyim</h1>
+            <p>Kelompok Kerja Guru - Kabupaten Sampang, Madura</p>
+            <nav>
+                <a href="#beranda">Beranda</a>
+                <a href="#tentang">Tentang</a>
+                <a href="#visimisi">Visi & Misi</a>
+                <a href="#agenda">Agenda</a>
+                <a href="#pengumuman">Pengumuman</a>
+                <a href="#galeri">Galeri</a>
+                <a href="#kontak">Kontak</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="tentang">
+            <h2>Tentang KKG Wahed Hasyim</h2>
+            <div id="tentang-content"></div>
+        </section>
+
+        <section id="visimisi">
+            <h2>Visi & Misi</h2>
+            <div id="visimisi-content"></div>
+        </section>
+
+        <section id="agenda">
+            <h2>Agenda Kegiatan</h2>
+            <div id="agenda-list"></div>
+        </section>
+
+        <section id="pengumuman">
+            <h2>Pengumuman Terbaru</h2>
+            <div id="pengumuman-list"></div>
+        </section>
+
+        <section id="galeri">
+            <h2>Galeri Kegiatan</h2>
+            <div id="galeri-content" class="galeri-grid"></div>
+        </section>
+
+        <section id="kontak">
+            <h2>Kontak Kami</h2>
+            <div id="kontak-content"></div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 KKG Wahed Hasyim - Kabupaten Sampang</p>
+            <p><a href="admin.html" class="admin-link">🔐 Admin Login</a></p>
+        </div>
+    </footer>
+
+    <script>
+        function loadData() {
+            const defaultData = {
+                tentang: '<p><strong>KKG Wahed Hasyim</strong> adalah wadah profesional guru MI/SD di lingkungan Kabupaten Sampang, Madura. Kami berkomitmen meningkatkan mutu pendidikan melalui pelatihan, diskusi, dan pengembangan perangkat pembelajaran.</p><p>Didirikan pada tahun 2010, KKG Wahed Hasyim telah melahirkan banyak guru berprestasi di tingkat kabupaten maupun provinsi.</p>',
+                visimisi: '<h3>Visi</h3><p>Menjadi pusat pengembangan profesi guru yang unggul, inovatif, dan berkarakter di Kabupaten Sampang.</p><h3>Misi</h3><ul><li>Meningkatkan kompetensi pedagogik dan profesional guru melalui pelatihan rutin</li><li>Mengembangkan perangkat pembelajaran berbasis teknologi</li><li>Membangun jaringan kerjasama dengan lembaga pendidikan lain</li><li>Mendorong penelitian tindakan kelas (PTK)</li></ul>',
+                kontak: '<p>📞 <strong>Kontak Person:</strong> 0812-3456-7890 (Bapak Slamet)</p><p>📧 <strong>Email:</strong> kkg.wahedhasyim@sampang.sch.id</p><p>📍 <strong>Sekretariat:</strong> Jl. KH. Wahed Hasyim No. 45, Sampang, Madura</p><p>🕒 <strong>Jam Kerja:</strong> Senin - Jumat, 08.00 - 15.00</p>',
+                agenda: [
+                    { id: 1, judul: "Pelatihan Kurikulum Merdeka", tanggal: "10 Mei 2025", tempat: "Aula KKG", waktu: "08.00 - 15.00" },
+                    { id: 2, judul: "Workshop Media Pembelajaran AI", tanggal: "25 Mei 2025", tempat: "MI Wahed Hasyim", waktu: "09.00 - 16.00" },
+                    { id: 3, judul: "Studi Banding ke Surabaya", tanggal: "5 Juni 2025", tempat: "Surabaya", waktu: "06.00 - 18.00" }
+                ],
+                pengumuman: [
+                    { id: 1, judul: "Pendaftaran Sertifikasi Guru", tanggal: "1 April 2025", isi: "Bagi guru yang belum tersertifikasi, segera daftarkan diri melalui link yang akan dikirim via WhatsApp grup." },
+                    { id: 2, judul: "Libur Hari Raya Idul Fitri", tanggal: "31 Maret 2025", isi: "Kegiatan KKG libur mulai 31 Maret - 8 April 2025. Selamat Hari Raya, mohon maaf lahir dan batin." }
+                ],
+                galeri: [
+                    { id: 1, url: "https://picsum.photos/id/20/300/200", caption: "Pelatihan Kurikulum Merdeka 2024" },
+                    { id: 2, url: "https://picsum.photos/id/159/300/200", caption: "Workshop Media Pembelajaran" },
+                    { id: 3, url: "https://picsum.photos/id/169/300/200", caption: "Rapat Koordinasi Anggota KKG" }
+                ]
+            };
+
+            let data = localStorage.getItem('kkgData');
+            if (!data) {
+                localStorage.setItem('kkgData', JSON.stringify(defaultData));
+            }
+
+            data = JSON.parse(localStorage.getItem('kkgData'));
+            
+            document.getElementById('tentang-content').innerHTML = data.tentang;
+            document.getElementById('visimisi-content').innerHTML = data.visimisi;
+            document.getElementById('kontak-content').innerHTML = data.kontak;
+
+            // Agenda
+            let agendaHtml = '<div class="card-container">';
+            data.agenda.forEach(a => {
+                agendaHtml += `
+                    <div class="card">
+                        <h3>📅 ${a.judul}</h3>
+                        <p><strong>📆 Tanggal:</strong> ${a.tanggal}</p>
+                        <p><strong>📍 Tempat:</strong> ${a.tempat}</p>
+                        <p><strong>⏰ Waktu:</strong> ${a.waktu || '08.00 - selesai'}</p>
+                    </div>
+                `;
+            });
+            agendaHtml += '</div>';
+            document.getElementById('agenda-list').innerHTML = agendaHtml;
+
+            // Pengumuman
+            let pengumumanHtml = '<div class="card-container">';
+            data.pengumuman.forEach(p => {
+                pengumumanHtml += `
+                    <div class="card pengumuman-card">
+                        <h3>📢 ${p.judul}</h3>
+                        <small>📆 ${p.tanggal}</small>
+                        <p>${p.isi}</p>
+                    </div>
+                `;
+            });
+            pengumumanHtml += '</div>';
+            document.getElementById('pengumuman-list').innerHTML = pengumumanHtml;
+
+            // Galeri
+            let galeriHtml = '';
+            data.galeri.forEach(g => {
+                galeriHtml += `
+                    <div class="galeri-item">
+                        <img src="${g.url}" alt="${g.caption}">
+                        <p>${g.caption}</p>
+                    </div>
+                `;
+            });
+            document.getElementById('galeri-content').innerHTML = galeriHtml;
+        }
+
+        loadData();
+    </script>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - KKG Wahed Hasyim</title>
+    <link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+    <div class="admin-container">
+        <div id="login-section" class="login-box">
+            <h1>🔐 Admin KKG Wahed Hasyim</h1>
+            <input type="password" id="password" placeholder="Masukkan Password">
+            <button onclick="login()">Login</button>
+            <p style="margin-top:10px; font-size:12px;">Default: admin123</p>
+        </div>
+
+        <div id="admin-panel" style="display:none;">
+            <div class="admin-header">
+                <h1>📋 Panel Admin KKG Wahed Hasyim</h1>
+                <button onclick="logout()" class="logout-btn">🚪 Logout</button>
+            </div>
+            
+            <div class="admin-grid">
+                <!-- Tentang -->
+                <div class="admin-card">
+                    <h2>📝 Edit Tentang</h2>
+                    <textarea id="edit-tentang" rows="5"></textarea>
+                    <button onclick="simpanTentang()">Simpan</button>
+                </div>
+
+                <!-- Visi Misi -->
+                <div class="admin-card">
+                    <h2>🎯 Edit Visi & Misi</h2>
+                    <textarea id="edit-visimisi" rows="5"></textarea>
+                    <button onclick="simpanVisimisi()">Simpan</button>
+                </div>
+
+                <!-- Kontak -->
+                <div class="admin-card">
+                    <h2>📞 Edit Kontak</h2>
+                    <textarea id="edit-kontak" rows="4"></textarea>
+                    <button onclick="simpanKontak()">Simpan</button>
+                </div>
+
+                <!-- Tambah Agenda -->
+                <div class="admin-card">
+                    <h2>➕ Tambah Agenda</h2>
+                    <input type="text" id="agenda-judul" placeholder="Judul Agenda">
+                    <input type="text" id="agenda-tanggal" placeholder="Tanggal (contoh: 10 Mei 2025)">
+                    <input type="text" id="agenda-tempat" placeholder="Tempat">
+                    <input type="text" id="agenda-waktu" placeholder="Waktu (contoh: 08.00 - 15.00)">
+                    <button onclick="tambahAgenda()">Tambah</button>
+                </div>
+
+                <!-- Tambah Pengumuman -->
+                <div class="admin-card">
+                    <h2>📢 Tambah Pengumuman</h2>
+                    <input type="text" id="pengumuman-judul" placeholder="Judul">
+                    <input type="text" id="pengumuman-tanggal" placeholder="Tanggal">
+                    <textarea id="pengumuman-isi" rows="3" placeholder="Isi pengumuman"></textarea>
+                    <button onclick="tambahPengumuman()">Tambah</button>
+                </div>
+
+                <!-- Upload Gambar Galeri -->
+                <div class="admin-card">
+                    <h2>🖼️ Upload Gambar Galeri</h2>
+                    <input type="file" id="gambar-input" accept="image/*">
+                    <input type="text" id="gambar-caption" placeholder="Caption gambar">
+                    <button onclick="uploadGambar()">Upload</button>
+                </div>
+
+                <!-- Manajemen Data -->
+                <div class="admin-card" style="grid-column: span 2;">
+                    <h2>📋 Manajemen Data Saat Ini</h2>
+                    <div id="preview-data"></div>
+                    <button onclick="hapusSemuaData()" style="background:#c0392b;">⚠️ Reset Semua Data</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PASSWORD = "admin123";
+
+        function login() {
+            const pwd = document.getElementById('password').value;
+            if (pwd === PASSWORD) {
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                loadAdminData();
+            } else {
+                alert('Password salah!');
+            }
+        }
+
+        function logout() {
+            document.getElementById('login-section').style.display = 'block';
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('password').value = '';
+        }
+
+        function loadAdminData() {
+            const data = JSON.parse(localStorage.getItem('kkgData'));
+            document.getElementById('edit-tentang').value = data.tentang;
+            document.getElementById('edit-visimisi').value = data.visimisi;
+            document.getElementById('edit-kontak').value = data.kontak;
+
+            let preview = '<h3>📅 Agenda</h3><ul>';
+            data.agenda.forEach(a => {
+                preview += `<li>${a.judul} - ${a.tanggal} (${a.tempat}) 
+                            <button onclick="hapusAgenda(${a.id})" style="margin-left:10px;">❌ Hapus</button></li>`;
+            });
+            preview += '</ul><h3>📢 Pengumuman</h3><ul>';
+            data.pengumuman.forEach(p => {
+                preview += `<li><strong>${p.judul}</strong> (${p.tanggal})<br>${p.isi}
+                            <button onclick="hapusPengumuman(${p.id})" style="margin-left:10px;">❌ Hapus</button></li>`;
+            });
+            preview += '</ul><h3>🖼️ Galeri</h3><div style="display:flex; flex-wrap:wrap; gap:10px;">';
+            data.galeri.forEach(g => {
+                preview += `<div><img src="${g.url}" width="100" height="70" style="object-fit:cover;"><br>
+                            <button onclick="hapusGaleri(${g.id})">🗑️ Hapus</button></div>`;
+            });
+            preview += '</div>';
+            document.getElementById('preview-data').innerHTML = preview;
+        }
+
+        function simpanTentang() {
+            let data = JSON.parse(localStorage.getItem('kkgData'));
+            data.tentang = document.getElementById('edit-tentang').value;
+            localStorage.setItem('kkgData', JSON.stringify(data));
+            alert('Tentang tersimpan');
+            loadAdminData();
+        }
+
+        function simpanVisimisi() {
+            let data = JSON.parse(localStorage.getItem('kkgData'));
+            data.visimisi = document.getElementById('edit-visimisi').value;
+            localStorage.setItem('kkgData', JSON.stringify(data));
+            alert('Visi Misi tersimpan');
+            loadAdminData();
+        }
+
+        function simpanKontak() {
+            let data = JSON.parse(localStorage.getItem('kkgData'));
+            data.kontak = document.getElementById('edit-kontak').value;
+            localStorage.setItem('kkgData', JSON.stringify(data));
+            alert('Kontak tersimpan');
+            loadAdminData();
+        }
+
+        function tambahAgenda() {
+            let data = JSON.parse(localStorage.getItem('kkgData'));
+            const newId = Date.now();
+            data.agenda.push({
+                id: newId,
+                judul: document.getElementById('agenda-judul').value,
+                tanggal: document.getElementById('agenda-tanggal').value,
+                tempat: document.getElementById('agenda-tempat').value,
+                waktu: document.getElementById('agenda-waktu').value
+            });
+            localStorage.setItem('kkgData', JSON.stringify(data));
+            alert('Agenda ditambahkan');
+            loadAdminData();
+            ['agenda-judul','agenda-tanggal','agenda-tempat','agenda-waktu'].forEach(id => document.getElementById(id).value = '');
+        }
+
+        function tambahPengumuman() {
+            let data = JSON.parse(localStorage.getItem('kkgData'));
+            const newId = Date.now();
+            data.pengumuman.push({
+                id: newId,
+                judul: document.getElementById('pengumuman-judul').value,
+                tanggal: document.getElementById('pengumuman-tanggal').value,
+                isi: document.getElementById('pengumuman-isi').value
+            });
+            localStorage.setItem('kkgData', JSON.stringify(data));
+            alert('Pengumuman ditambahkan');
+            loadAdminData();
+            ['pengumuman-judul','pengumuman-tanggal','pengumuman-isi'].forEach(id => document.getElementById(id).value = '');
+        }
+
+        function uploadGambar() {
+            const fileInput = document.getElementById('gambar-input');
+            const caption = document.getElementById('gambar-caption').value;
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Pilih file gambar dulu!');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                let data = JSON.parse(localStorage.getItem('kkgData'));
+                const newId = Date.now();
+                data.galeri.push({
+                    id: newId,
+                    url: e.target.result,
+                    caption: caption || 'Kegiatan KKG'
+                });
+                localStorage.setItem('kkgData', JSON.stringify(data));
+                alert('Gambar berhasil diupload!');
+                loadAdminData();
+                fileInput.value = '';
+                document.getElementById('gambar-caption').value = '';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function hapusAgenda(id) {
+            let data = JSON.parse(localStorage.getItem('kkgData'));
+            data.agenda = data.agenda.filter(a => a.id !== id);
+            localStorage.setItem('kkgData', JSON.stringify(data));
+            loadAdminData();
+        }
+
+        function hapusPengumuman(id) {
+            let data = JSON.parse(localStorage.getItem('kkgData'));
+            data.pengumuman = data.pengumuman.filter(p => p.id !== id);
+            localStorage.setItem('kkgData', JSON.stringify(data));
+            loadAdminData();
+        }
+
+        function hapusGaleri(id) {
+            let data = JSON.parse(localStorage.getItem('kkgData'));
+            data.galeri = data.galeri.filter(g => g.id !== id);
+            localStorage.setItem('kkgData', JSON.stringify(data));
+            loadAdminData();
+        }
+
+        function hapusSemuaData() {
+            if(confirm('Yakin ingin mereset semua data ke default? Data saat ini akan hilang!')) {
+                localStorage.removeItem('kkgData');
+                location.reload();
+            }
+        }
+
+        // Inisialisasi default data jika belum ada
+        if(!localStorage.getItem('kkgData')) {
+            const defaultData = {
+                tentang: '<p><strong>KKG Wahed Hasyim</strong> adalah wadah profesional guru MI/SD di Kabupaten Sampang.</p>',
+                visimisi: '<h3>Visi</h3><p>Menjadi pusat pengembangan profesi guru yang unggul.</p><h3>Misi</h3><ul><li>Meningkatkan kompetensi guru</li><li>Mengembangkan pembelajaran inovatif</li></ul>',
+                kontak: '<p>📞 0812-3456-7890</p><p>📧 kkg@sampang.sch.id</p>',
+                agenda: [],
+                pengumuman: [],
+                galeri: []
+            };
+            localStorage.setItem('kkgData', JSON.stringify(defaultData));
+        }
+    </script>
+</body>
+</html>
